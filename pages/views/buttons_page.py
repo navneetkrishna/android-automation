@@ -40,7 +40,20 @@ class ButtonsPage(BasePage):
 
         self.click(self.TOGGLE_BUTTON)
 
-        # ── Verifications ──────────────────────────────
+
+    def click_toggle_button(self):
+        logger.info("Clicking Toggle button")
+        self.click(self.TOGGLE_BUTTON)
+
+
+    # ── Verifications ──────────────────────────────
 
     def is_normal_button_displayed(self):
         return self.is_displayed(self.NORMAL_BUTTON)
+
+    def is_small_button_displayed(self):
+        return self.is_displayed(self.SMALL_BUTTON)
+
+    def toggle_button_status(self):
+        logger.info("Toggling button status")
+        return self.find_visible_element(self.TOGGLE_BUTTON).get_attribute('text')

@@ -11,9 +11,8 @@ CAPS = {
     "appium:deviceName": device,
     "appium:udid": device,
     "appium:platformVersion": get_platform_version(device),
-    "appium:app": "D:/QA_Automation/android-automation/apk/ApiDemos-debug.apk",
+    "appium:app": "E:/Projects/android-automation/apk/ApiDemos-debug.apk",
     "appium:automationName": "UiAutomator2",
-    "appium:appWaitActivity": "*",
     "appium:noReset": False,
     "appium:newCommandTimeout": 120
 }
