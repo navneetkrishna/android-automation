@@ -1,5 +1,7 @@
 import random
 
+from jinja2.nodes import And
+
 from pages.base_page import BasePage
 from appium.webdriver.common.appiumby import AppiumBy
 from utils.logger import get_logger
@@ -25,7 +27,9 @@ class ControlsPage(BasePage):
 
     DROPDOWN = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("io.appium.android.apis:id/spinner1")')
 
-    DROPDOWN_MENU = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("android:id/select_dialog_listview")')
+    DROPDOWN_LIST = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("android:id/select_dialog_listview")')
+
+    CURRENT_DROPDOWN_ITEM = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("android:id/text1")')
 
 
     # ── Actions ────────────────────────────────────
@@ -52,7 +56,7 @@ class ControlsPage(BasePage):
     def select_dropdown_menu_option(self, option=None):
         # 1. Open the dropdown first
         logger.info("Opening dropdown menu")
-        self.click(ControlsPage.DROPDOWN)
+        self.select_dropdown()
 
         # 2. Handle 'None' or validate the choice
         if option is None:
@@ -60,38 +64,14 @@ class ControlsPage(BasePage):
             logger.info(f"Randomly picked: {option}")
 
         elif option not in ControlsPage.DROPDOWN_MENU_ITEMS:
-            logger.error(f"Option '{option}' is not a valid planet!")
+            logger.error(f"Option '{option}' is not a valid option!")
             return None
 
         # 3. Select the option
         logger.info(f"Clicking on option text: {option}")
-        # Tip: Using UiSelector().text() is perfect here for precision
         self.click((AppiumBy.ANDROID_UIAUTOMATOR, f'new UiSelector().text("{option}")'))
 
         return option
-
-    # def select_dropdown_menu_option(self, option=None):
-    #
-    #     logger.info(f"Received dropdown menu option: {option}")
-    #
-    #     if option is None:
-    #         logger.info(f"None passed as desired option, picking a random option from the options list")
-    #
-    #         option = random.choice(ControlsPage.DROPDOWN_MENU_ITEMS)
-    #         logger.info(f"Picked option from the options list: {option}")
-    #
-    #         logger.info(f"Selecting option: {option}")
-    #         self.click((AppiumBy.ANDROID_UIAUTOMATOR, f'new UiSelector().text("{option}")'))
-    #
-    #         return option
-    #
-    #     elif option in ControlsPage.DROPDOWN_MENU_ITEMS:
-    #         logger.info(f"Selecting option: {option}")
-    #         self.click((AppiumBy.ANDROID_UIAUTOMATOR, f'new UiSelector().text("{option}")'))
-    #
-    #         return option
-    #
-    #     return None
 
     # ── Verifications ──────────────────────────────
 
@@ -108,7 +88,8 @@ class ControlsPage(BasePage):
         return self.find_visible_element(self.RADIO_2).get_attribute('checked') == 'true'
 
     def is_dropdown_opened(self):
-        return self.find_visible_element(self.DROPDOWN_MENU).is_displayed()
+        return self.find_visible_element(self.DROPDOWN_LIST).is_displayed()
 
     def selected_dropdown_option(self):
         logger.info("Selected dropdown option")
+        return self.find_visible_element(self.CURRENT_DROPDOWN_ITEM).get_attribute('text')

@@ -47,7 +47,6 @@ class TestCheckbox:
         controls.select_radio2()
         assert controls.is_radio_2_selected()
 
-    @pytest.mark.demo
     def test_dropdown_selection(self, driver):
         # Main Menu → Views
         home = HomePage(driver)
@@ -63,9 +62,20 @@ class TestCheckbox:
 
         desired_option = 'Venus'
         controls.select_dropdown_menu_option(desired_option)
-        assert
+        assert controls.selected_dropdown_option() == desired_option
 
-        sel2 = controls.select_dropdown_menu_option()
-        print(sel2)
+    def test_dropdown_selection_random(self, driver):
+        # Main Menu → Views
+        home = HomePage(driver)
+        home.navigate_to("Views")
 
+        # Views → Controls → Radio
+        views = ViewsHomePage(driver)
+        views.navigate_to("Controls")
+        views.navigate_to("1. Light Theme")
 
+        # controls page
+        controls = ControlsPage(driver)
+
+        option = controls.select_dropdown_menu_option()
+        assert controls.selected_dropdown_option() == option
