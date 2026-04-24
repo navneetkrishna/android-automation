@@ -1,5 +1,3 @@
-import pytest
-
 from pages.home_page import HomePage
 from pages.views.views_home_page import ViewsHomePage
 from pages.views.buttons_page import ButtonsPage
@@ -39,7 +37,6 @@ class TestButtons:
         buttons.click_small_button()
 
 
-    @pytest.mark.demo
     def test_toggle_button(self, driver):
 
         # Main Menu → Views

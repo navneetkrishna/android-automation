@@ -1,3 +1,4 @@
+import pytest
 from pages.home_page import HomePage
 from pages.views.controls_page import ControlsPage
 from pages.views.views_home_page import ViewsHomePage
@@ -46,17 +47,25 @@ class TestCheckbox:
         controls.select_radio2()
         assert controls.is_radio_2_selected()
 
-    # def test_dropdown_selection(self, driver):
-    #     # Main Menu → Views
-    #     home = HomePage(driver)
-    #     home.navigate_to("Views")
-    #
-    #     # Views → Controls → Radio
-    #     views = ViewsHomePage(driver)
-    #     views.navigate_to("Controls")
-    #     views.navigate_to("1. Light Theme")
-    #
-    #     # controls page
-    #     controls = ControlsPage(driver)
-    #
-    #     controls.click_dropdown()
+    @pytest.mark.demo
+    def test_dropdown_selection(self, driver):
+        # Main Menu → Views
+        home = HomePage(driver)
+        home.navigate_to("Views")
+
+        # Views → Controls → Radio
+        views = ViewsHomePage(driver)
+        views.navigate_to("Controls")
+        views.navigate_to("1. Light Theme")
+
+        # controls page
+        controls = ControlsPage(driver)
+
+        desired_option = 'Venus'
+        controls.select_dropdown_menu_option(desired_option)
+        assert
+
+        sel2 = controls.select_dropdown_menu_option()
+        print(sel2)
+
+
