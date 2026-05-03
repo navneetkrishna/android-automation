@@ -16,7 +16,10 @@ def test_date(driver):
 
     date_page = DateWidgetPage(driver)
 
-    date = "31-12-2020"
-    date_page.set_date_to(date)
-    time.sleep(2)
+    set_date = "1-1-2020"
+    date_page.set_date_to(set_date)
+
+    current_date = date_page.confirm_date()
+
+    assert current_date == set_date, 'Set date and Current date did not match'
 

@@ -18,6 +18,8 @@ class DateWidgetPage(BasePage):
 
     # Submenus
 
+    CURRENT_DATE_TIME = (AppiumBy.ID, 'io.appium.android.apis:id/dateDisplay')
+
     CHANGE_THE_DATE = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("io.appium.android.apis:id/pickDate")')
 
     CHANGE_THE_TIME = ( AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("io.appium.android.apis:id/pickTime")')
@@ -103,11 +105,31 @@ class DateWidgetPage(BasePage):
 
 
         # 3. select date
-        logger.info(f"Selecting date: {f_date[0]}")
-        waits.wait_visible(self.driver, (AppiumBy.ANDROID_UIAUTOMATOR,
-                            f'new UiSelector().text("{f_date[0]}")')
-                           ).click()
+        target_day = str(int(f_date[0]))
+        # locator will look for "2" instead of "02"
 
+        logger.info(f"Selecting date: {target_day}")
 
+        day_locator = (AppiumBy.ANDROID_UIAUTOMATOR, f'new UiSelector().text("{target_day}")')
+        waits.wait_visible(self.driver, day_locator).click()
         self.click(self.CALENDAR_OK)
 
+
+    # Verification
+
+    def confirm_date(self):
+        logger.info(f"Confirming date")
+
+        # logger.info('Clicking Dialog button')
+        # self.click(self.DIALOG)
+
+        # App format 5-3-2026 01:02 [month-day-year]
+        date_part = self.find_element(self.CURRENT_DATE_TIME).text.split(' ')[0]
+
+        date_obj = datetime.strptime(date_part, "%m-%d-%Y")
+
+        # Format as Day-Month-Year (%d-%m-%Y)
+        formatted_date = date_obj.strftime("%#d-%#m-%Y")
+        logger.info(f"Formatted date: {formatted_date}")
+
+        return formatted_date
