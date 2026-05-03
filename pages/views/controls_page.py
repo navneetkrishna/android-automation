@@ -1,7 +1,4 @@
 import random
-
-from jinja2.nodes import And
-
 from pages.base_page import BasePage
 from appium.webdriver.common.appiumby import AppiumBy
 from utils.logger import get_logger
