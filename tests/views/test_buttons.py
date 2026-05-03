@@ -5,6 +5,7 @@ from pages.views.buttons_page import ButtonsPage
 
 class TestButtons:
 
+
     def test_normal_button_click(self, driver):
 
         # Main Menu → Views

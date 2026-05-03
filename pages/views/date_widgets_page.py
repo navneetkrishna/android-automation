@@ -49,49 +49,13 @@ class DateWidgetPage(BasePage):
         logger.info("Clicking 'change the date' button")
         self.click(self.CHANGE_THE_DATE)
 
-        # change date >> month >> year
+        # change year >> month >> date
 
-        # 1. select date
-        logger.info(f"Selecting date: {f_date[0]}")
-        waits.wait_visible(self.driver, (AppiumBy.ANDROID_UIAUTOMATOR,
-                            f'new UiSelector().text("{f_date[0]}")')
-                           ).click()
-
-        # 2. select month
-        logger.info('Selecting month')
-        month_locator = self.find_element((AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("android:id/date_picker_header_date")'))
-
-        # Date format usually: "Sun, May 3" -> Index 1 is Month
-        current_month = month_locator.get_attribute('text').split(" ")[2]
-
-
-        logger.info(f'Current month: {current_month} and target month: {f_date[1]}')
-
-        current_month_digit = int(datetime.strptime(current_month, "%b").month)
-        target_month_digit = int(datetime.strptime(f_date[1], "%b").month)
-
-        logger.info(f'Current month numeric: {current_month_digit} and target month numeric: {target_month_digit}')
-
-        if target_month_digit == current_month_digit:
-            logger.info(f"target month and current month are same")
-            pass
-
-        elif target_month_digit > current_month_digit:
-            for i in range(target_month_digit - current_month_digit):
-                logger.info(f"target month is higher than current month, performing next click, count: {i}")
-                self.find_element((AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("android:id/next")')).click()
-
-        elif target_month_digit < current_month_digit:
-            for i in range(current_month_digit - target_month_digit):
-                logger.info(f"target month is less than current month, performing prev click, count: {i}")
-                self.find_element((AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("android:id/prev")')).click()
-
-
-        # 3. select year
+        # 1. select year
         # open year dropdown
         logger.info('Clicking year dropdown')
         waits.wait_visible(self.driver, (AppiumBy.ANDROID_UIAUTOMATOR,
-                            f'new UiSelector().resourceId("android:id/date_picker_header_year")')
+                                         f'new UiSelector().resourceId("android:id/date_picker_header_year")')
                            ).click()
 
         current_year = int(datetime.today().year)
@@ -107,4 +71,43 @@ class DateWidgetPage(BasePage):
             scroll_until_element_found(self.driver, search_year_locator, direction='down', distance=500, timeout=2)
 
 
+        # 2. select month
+        logger.info('Selecting month')
+        month_ele_text = self.find_element((AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("android:id/date_picker_header_date")')).text
+
+        # Date format usually: "Sun, 3 May" -> Index 1 is Month
+        current_month_str = month_ele_text.split(" ")[2]
+
+        logger.info(f'Current month: {current_month_str} and target month: {f_date[1]}')
+
+        current_month_digit = datetime.strptime(current_month_str, "%b").month
+        target_month_digit = datetime.strptime(f_date[1], "%b").month
+
+        logger.info(f'Current month numeric: {current_month_digit} and target month numeric: {target_month_digit}')
+
+        diff = target_month_digit - current_month_digit
+
+        if target_month_digit == current_month_digit:
+            logger.info(f"target month and current month are same")
+            pass
+
+        elif diff > 0:
+            for i in range(diff):
+                logger.info(f"target month is higher than current month, performing next click, count: {i}")
+                self.click((AppiumBy.ID, "android:id/next"))
+
+        elif diff < 0:
+            for i in range(abs(diff)):
+                logger.info(f"target month is less than current month, performing prev click, count: {i}")
+                self.click((AppiumBy.ID, "android:id/prev"))
+
+
+        # 3. select date
+        logger.info(f"Selecting date: {f_date[0]}")
+        waits.wait_visible(self.driver, (AppiumBy.ANDROID_UIAUTOMATOR,
+                            f'new UiSelector().text("{f_date[0]}")')
+                           ).click()
+
+
         self.click(self.CALENDAR_OK)
+
