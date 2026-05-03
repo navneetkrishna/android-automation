@@ -2,7 +2,7 @@ import subprocess
 import os
 from datetime import datetime
 
-from selenium.common import NoSuchElementException
+from selenium.common import NoSuchElementException, TimeoutException
 
 from utils.logger import get_logger
 from selenium.webdriver.common.actions.action_builder import ActionBuilder
@@ -150,7 +150,7 @@ def scroll_until_element_found(driver, locator, direction="up", distance=500, ti
                 # Exit function entirely
                 return  element
 
-        except NoSuchElementException, TimeoutError:
+        except Exception:
             # If not found or not clickable, scroll and try again
             logger.info(f"Element is not visible, performing scroll {scroll_count + 1}")
             perform_scroll(driver, direction=direction, distance=distance)

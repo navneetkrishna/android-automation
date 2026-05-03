@@ -41,7 +41,7 @@ class DateWidgetPage(BasePage):
         logger.info(f"Setting date to {set_date}")
 
         f_date = format_date(set_date).split('-')
-        print(f_date)
+        # print(f_date)
 
         # navigate to Dialog >> 'change the date'
         self.click_dialog_option()
@@ -58,6 +58,33 @@ class DateWidgetPage(BasePage):
                            ).click()
 
         # 2. select month
+        logger.info('Selecting month')
+        month_locator = self.find_element((AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("android:id/date_picker_header_date")'))
+
+        # Date format usually: "Sun, May 3" -> Index 1 is Month
+        current_month = month_locator.get_attribute('text').split(" ")[2]
+
+
+        logger.info(f'Current month: {current_month} and target month: {f_date[1]}')
+
+        current_month_digit = int(datetime.strptime(current_month, "%b").month)
+        target_month_digit = int(datetime.strptime(f_date[1], "%b").month)
+
+        logger.info(f'Current month numeric: {current_month_digit} and target month numeric: {target_month_digit}')
+
+        if target_month_digit == current_month_digit:
+            logger.info(f"target month and current month are same")
+            pass
+
+        elif target_month_digit > current_month_digit:
+            for i in range(target_month_digit - current_month_digit):
+                logger.info(f"target month is higher than current month, performing next click, count: {i}")
+                self.find_element((AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("android:id/next")')).click()
+
+        elif target_month_digit < current_month_digit:
+            for i in range(current_month_digit - target_month_digit):
+                logger.info(f"target month is less than current month, performing prev click, count: {i}")
+                self.find_element((AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("android:id/prev")')).click()
 
 
         # 3. select year
@@ -78,3 +105,6 @@ class DateWidgetPage(BasePage):
 
         else:
             scroll_until_element_found(self.driver, search_year_locator, direction='down', distance=500, timeout=2)
+
+
+        self.click(self.CALENDAR_OK)
