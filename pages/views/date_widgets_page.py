@@ -139,7 +139,7 @@ class DateWidgetPage(BasePage):
     
     # Verification
 
-        def confirm_date_time(self):
+    def confirm_date_time(self):
         logger.info(f"Confirming date and time")
 
         raw_text = self.find_element(self.CURRENT_DATE_TIME).text
