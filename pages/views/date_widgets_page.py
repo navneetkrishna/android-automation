@@ -114,7 +114,7 @@ class DateWidgetPage(BasePage):
         waits.wait_visible(self.driver, day_locator).click()
         self.click(self.CALENDAR_OK)
 
-        def set_dialer_time_to(self, set_time:str='10-10-am'):
+    def set_dialer_time_to(self, set_time:str='10-10-am'):
         logger.info(f"Setting time to {set_time}")
         self.click(self.DIALOG)
         self.click(self.CHANGE_THE_TIME)
