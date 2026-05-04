@@ -114,22 +114,56 @@ class DateWidgetPage(BasePage):
         waits.wait_visible(self.driver, day_locator).click()
         self.click(self.CALENDAR_OK)
 
+        def set_dialer_time_to(self, set_time:str='10-10-am'):
+        logger.info(f"Setting time to {set_time}")
+        self.click(self.DIALOG)
+        self.click(self.CHANGE_THE_TIME)
 
+        time_lst = [_ for _ in set_time.split('-')]
+        hour, minute, segment = time_lst[0], time_lst[1], time_lst[2]
+
+        logger.info(f"Setting hour to: {hour}, minute to: {minute} and period: {segment}")
+        #     select hour >> minute >> period
+        # 1. select hour
+        logger.info(f"Setting hour: {hour}")
+
+        self.click((AppiumBy.ANDROID_UIAUTOMATOR, f'new UiSelector().description("{hour}")'))
+
+        self.click((AppiumBy.ANDROID_UIAUTOMATOR, f'new UiSelector().description("{minute}")'))
+
+        self.click((AppiumBy.ID, f'android:id/{segment}_label'))
+
+        logger.info("Time set, clicking on OK button")
+        self.click(self.CALENDAR_OK)
+
+    
     # Verification
 
-    def confirm_date(self):
-        logger.info(f"Confirming date")
+        def confirm_date_time(self):
+        logger.info(f"Confirming date and time")
 
-        # logger.info('Clicking Dialog button')
-        # self.click(self.DIALOG)
+        raw_text = self.find_element(self.CURRENT_DATE_TIME).text
+        logger.info(f"Raw date-time text: {raw_text}")
 
-        # App format 5-3-2026 01:02 [month-day-year]
-        date_part = self.find_element(self.CURRENT_DATE_TIME).text.split(' ')[0]
+        # App format 5-3-2026 01:02 [month-day-year 24hr-00min]
 
+        date_part, time_part = raw_text.split(' ')
+        logger.info(f"Date part: {date_part}, Time part: {time_part}")
+
+        # Parse date
         date_obj = datetime.strptime(date_part, "%m-%d-%Y")
 
         # Format as Day-Month-Year (%d-%m-%Y)
         formatted_date = date_obj.strftime("%#d-%#m-%Y")
         logger.info(f"Formatted date: {formatted_date}")
 
-        return formatted_date
+        # Parse time
+        time_obj = datetime.strptime(time_part, "%H:%M")
+
+        formatted_time = time_obj.strftime("%#I-%M-%p").lower()
+
+        logger.info(f"Formatted date: {formatted_date}")
+        logger.info(f"Formatted time: {formatted_time}")
+
+        return formatted_date, formatted_time
+    
