@@ -4,6 +4,7 @@ from pages.base_page import BasePage
 from utils.logger import get_logger
 from utils.helpers import format_date, scroll_until_element_found
 from utils import waits
+from selenium.common import TimeoutException
 
 
 logger = get_logger(__name__)
@@ -136,7 +137,58 @@ class DateWidgetPage(BasePage):
         logger.info("Time set, clicking on OK button")
         self.click(self.CALENDAR_OK)
 
+        def set_digital_time_to(self, set_time:str='10-10-am'):
+            logger.info(f"Setting time to {set_time}")
     
+            time_lst = [_ for _ in set_time.split('-')]
+            hour, minute, segment = time_lst[0], time_lst[1], time_lst[2]
+            logger.info(f"Setting hour to: {hour}, minute to: {minute} and period: {segment}")
+    
+            self.click(self.DIALOG)
+            self.click(self.CHANGE_THE_TIME)
+    
+            logger.info("Clicking on clock toggle icon button")
+            self.click((AppiumBy.ID, 'android:id/toggle_mode'))
+    
+            try:
+                # if set time header is available, current clock is digital
+                logger.info("Locating set timer header")
+                set_time_header = waits.wait_visible(self.driver, (AppiumBy.ID, 'android:id/input_header'), 2)
+                # logger.info(f"Set time header element located, element {set_time_header}")
+                logger.info(f"Set time header element located, text: {set_time_header.text}")
+    
+            except TimeoutException as e:
+                # if set time header is not located, click on clock toggle
+                # confirm set time header is visible.
+                logger.info(f"Could not locate, 'Set time header element'")
+                logger.info("Clicking on clock toggle icon button")
+                self.click((AppiumBy.ID, 'android:id/toggle_mode'))
+    
+                logger.info("Verifying set timer header")
+                if waits.wait_visible(self.driver, (AppiumBy.ID, 'android:id/input_header'), 2).text != 'Set time':
+                    raise TimeoutException(f"Could not locate, 'Set time header element'")
+    
+            # set target time
+    
+            logger.info(f"Set hour to: {hour}")
+            self.find_element((AppiumBy.ID, 'android:id/input_hour')).send_keys(hour)
+    
+            logger.info(f"Set minutes to: {minute}")
+            self.find_element((AppiumBy.ID, 'android:id/input_minute')).send_keys(minute)
+    
+            # self.click((AppiumBy.ID, 'android:id/text1'))
+            logger.info(f"Set period to: {segment}")
+    
+            segment_ele = self.find_visible_element((AppiumBy.ID, 'android:id/text1'))
+    
+            if segment != segment_ele.text:
+                self.click(segment_ele)
+                self.click((AppiumBy.ANDROID_UIAUTOMATOR, f'new UiSelector().text("{segment}")'))
+    
+            # click on OK button to save changes
+            self.click(self.CALENDAR_OK)
+
+
     # Verification
 
     def confirm_date_time(self):
