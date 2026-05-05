@@ -10,12 +10,12 @@ class ButtonsPage(BasePage):
 
     NORMAL_BUTTON = (
         AppiumBy.ANDROID_UIAUTOMATOR,
-        'new UiSelector().text("Normal")'
+        'new UiSelector().text("NORMAL")'
     )
 
     SMALL_BUTTON = (
         AppiumBy.ANDROID_UIAUTOMATOR,
-        'new UiSelector().text("Small")'
+        'new UiSelector().text("SMALL")'
     )
 
     TOGGLE_BUTTON = (
