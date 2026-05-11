@@ -1,61 +1,57 @@
-import pytest
-from pages.home_page import HomePage
-from pages.views.views_home_page import ViewsHomePage
-from pages.views.alert_dialogs_page import AlertDialogsPage
+from appium.webdriver.common.appiumby import AppiumBy
+from pages.base_page import BasePage
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+class AlertDialogsPage(BasePage):
 
-class TestAlertDialogs:
+    # ── Locators ─────────────────────────────────────────────────────────────
+    # Alert Dialog Buttons (main list)
+    OK_CANCEL_DIALOG_BTN    = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("OK CANCEL DIALOG WITH A MESSAGE")')
+    OK_CANCEL_LONG_BTN      = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("OK CANCEL DIALOG WITH A LONG MESSAGE")')
+    LIST_DIALOG_BTN         = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("LIST DIALOG")')
+    PROGRESS_DIALOG_BTN = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("PROGRESS DIALOG")')
+    SINGLE_CHOICE_BTN       = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("SINGLE CHOICE LIST")')
+    MULTI_CHOICE_BTN        = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("REPEAT ALARM")')
 
-    @pytest.fixture(autouse=True)
-    def navigate_to_alert_dialogs(self, driver):
-        """Navigate to Alert Dialogs screen before each test"""
-        home = HomePage(driver)
-        home.navigate_to("App")
+    # ── Dialog Action Buttons ─────────────────────────────────────────────────
+    DIALOG_OK_BTN           = (AppiumBy.ID, "android:id/button1")
+    DIALOG_CANCEL_BTN       = (AppiumBy.ID, "android:id/button2")
+    DIALOG_TITLE            = (AppiumBy.ID, "android:id/alertTitle")
+    DIALOG_MESSAGE          = (AppiumBy.ID, "android:id/message")
 
-        views = ViewsHomePage(driver)
-        views.navigate_to("Alert Dialogs")
+    # ── Actions ───────────────────────────────────────────────────────────────
+    def open_ok_cancel_dialog(self):
+        logger.info("Opening OK/Cancel dialog")
+        self.click(self.OK_CANCEL_DIALOG_BTN)
 
-        self.alert_page = AlertDialogsPage(driver)
+    def get_dialog_title(self):
+        return self.get_text(self.DIALOG_TITLE)
 
-    def test_ok_cancel_dialog_title(self, driver):
-        """Verify OK/Cancel dialog opens with correct title"""
-        self.alert_page.open_ok_cancel_dialog()
-        title = self.alert_page.get_dialog_title()
-        logger.info(f"Dialog title: {title}")
-        assert title == "Lorem ipsum dolor sit aie consectetur adipiscing\nPlloaso mako nuto siwuf cakso dodtos anr koop."
+    def get_dialog_message(self):
+        return self.get_text(self.DIALOG_MESSAGE)
 
-    def test_accept_ok_cancel_dialog(self, driver):
-        """Verify dialog closes after clicking OK"""
-        self.alert_page.open_ok_cancel_dialog()
-        self.alert_page.accept_dialog()
-        assert not self.alert_page.is_displayed(self.alert_page.DIALOG_OK_BTN), \
-            "Dialog should be dismissed after OK"
+    def accept_dialog(self):
+        logger.info("Accepting dialog (OK)")
+        self.click(self.DIALOG_OK_BTN)
 
-    def test_dismiss_ok_cancel_dialog(self, driver):
-        """Verify dialog closes after clicking Cancel"""
-        self.alert_page.open_ok_cancel_dialog()
-        self.alert_page.dismiss_dialog()
-        assert not self.alert_page.is_displayed(self.alert_page.DIALOG_CANCEL_BTN), \
-            "Dialog should be dismissed after Cancel"
+    def dismiss_dialog(self):
+        logger.info("Dismissing dialog (Cancel)")
+        self.click(self.DIALOG_CANCEL_BTN)
 
-    def test_list_dialog_opens(self, driver):
-        """Verify list dialog opens successfully"""
-        self.alert_page.open_list_dialog()
-        assert self.alert_page.is_displayed(self.alert_page.DIALOG_TITLE), \
-            "List dialog should be visible"
+    def open_list_dialog(self):
+        logger.info("Opening List dialog")
+        self.click(self.LIST_DIALOG_BTN)
 
-    def test_ok_cancel_dialog_long_msg(self, driver):
-        """Verify OK/Cancel dialog long title"""
-        self.alert_page.open_ok_cancel_long_dialog()
+    def open_single_choice_dialog(self):
+        logger.info("Opening Single Choice dialog")
+        self.click(self.SINGLE_CHOICE_BTN)
 
-        title = self.alert_page.get_dialog_message()
-        logger.info(f"Dialog title: {title}")
-        assert title == ("Plloaso mako nuto siwuf cakso dodtos anr koop a cupy uf cak vux noaw yerw phuno. "
-                         "Whag schengos, uf efed, quiel ba mada su otrenzr."
-                         "\n\nSwipontgwook proudgs hus yag su ba dagarmidad. "
-                         "Plasa maku noga wipont trenzsa schengos ent kaap zux comy."
-                         "\n\nWipont trenz kipg naar mixent phona. "
-                         "Cak pwico siructiun ruous nust apoply tyu cak Uhex sisulutiun munityuw uw dseg")
+    def open_progress_dialog(self):
+        logger.info("Opening Progress dialog")
+        self.click(self.PROGRESS_DIALOG_BTN)
+
+    def open_ok_cancel_long_dialog(self):
+        logger.info("Opening OK/Cancel long dialog")
+        self.click(self.OK_CANCEL_LONG_BTN)
